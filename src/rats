@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+
+import model
+import render
+import ai
+import time
+
+if __name__ == "__main__":
+
+    game = model.Model(100, 100, 10, [ai.AI()])
+    view = render.View()
+
+    while True:
+        game.step()
+        view.render(model)
+        time.sleep(0.5)
+
