@@ -4,14 +4,14 @@ import model
 import render
 import ai
 import time
+import logging
 
 if __name__ == "__main__":
-
+    logging.basicConfig(filename='rats.log', level=logging.INFO)
     game = model.Model(100, 100, 10, [ai.AI()])
-    view = render.View()
-
+    view = render.View(game.map.size)
     while True:
         game.step()
-        view.render(model)
-        time.sleep(0.5)
+        view.render(game)
+        time.sleep(0.05)
 
