@@ -94,14 +94,18 @@ class View:
             label_rats_value = font.render(str(len(colony.get_rats())), True, config.color[colony.color])
             labels_rats_value.append(label_rats_value)
 
-        x_value_offset = 45
-        self.screen.blit(label_time, (10, 10))
-        self.screen.blit(label_time_value, (x_value_offset, 10))
-        self.screen.blit(label_food, (10, 20))
-        self.screen.blit(label_food_value, (x_value_offset, 20))
-        self.screen.blit(label_rats, (10, 30))
-        y_offset = 30
+        x_offset = 15
+        y_offset = 15
+        x_value_offset = 50
+        y_increment = 15
+        self.screen.blit(label_time, (x_offset, y_offset))
+        self.screen.blit(label_time_value, (x_value_offset, y_offset))
+        y_offset = y_offset + y_increment
+        self.screen.blit(label_food, (x_offset, y_offset))
+        self.screen.blit(label_food_value, (x_value_offset, y_offset))
+        y_offset = y_offset + y_increment
+        self.screen.blit(label_rats, (x_offset, y_offset))
         for label in labels_rats_value:
             self.screen.blit(label, (x_value_offset, y_offset))
-            y_offset = y_offset + 10
+            y_offset = y_offset + y_increment
         
