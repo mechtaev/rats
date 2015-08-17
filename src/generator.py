@@ -15,14 +15,14 @@ class Generator:
         self.holes = []
         for i in range(config.num_holes):
             self.holes.append(Hole(self.randpoint())) # should be less random
-        colonies_ais = [AI()]
-        holes_for_colony = utils.partition(self.holes, len(colonies_ais))
+        colonies = [(0, AI()), (1, AI())]
+        holes_for_colony = utils.partition(self.holes, len(colonies))
         self.colonies = []
-        for index, ai in enumerate(colonies_ais):
-            rats = []
+        for index, (color, ai) in enumerate(colonies):
+            holes = holes_for_colony[index]
+            colony = Colony(color, ai, holes)
             for i in range(config.num_rats):
-                rats.append(Rat(random.choice([0, 1]), self.randpoint(), 0)) # should be less random
-            colony = Colony(ai, rats, holes_for_colony[index])
+                colony.add_new_rat(self.randpoint(), random.choice(holes), 0)
             self.colonies.append(colony)
 
     def randpoint(self):

@@ -6,10 +6,12 @@ import config
 pygame.init()
 
 images = dict()
-images['rat'] = pygame.image.load(os.path.join('data', 'rat.png'))
-images['rat_moving'] = pygame.image.load(os.path.join('data', 'rat_moving.png'))
-images['white_rat'] = pygame.image.load(os.path.join('data', 'white_rat.png'))
-images['white_rat_moving'] = pygame.image.load(os.path.join('data', 'white_rat_moving.png'))
+images['rat'] = dict()
+images['rat_moving'] = dict()
+images['rat'][0] = pygame.image.load(os.path.join('data', 'rat.png'))
+images['rat_moving'][0] = pygame.image.load(os.path.join('data', 'rat_moving.png'))
+images['rat'][1] = pygame.image.load(os.path.join('data', 'white_rat.png'))
+images['rat_moving'][1] = pygame.image.load(os.path.join('data', 'white_rat_moving.png'))
 images['food'] = pygame.image.load(os.path.join('data', 'food.png'))
 images['hole'] = pygame.image.load(os.path.join('data', 'hole.png'))
 
@@ -33,17 +35,11 @@ class View:
         for dead in model.map.dead_bodies:
             self._render_dead(dead)
         for colony in model.colonies:
-            for rat in colony.rats:
+            for rat in colony.get_rats():
                 if not rat.invisible:
                     self._render_rat(rat)
 
-        label_time = font.render("Time: " + str(model.time), True, config.foreground)
-        label_rats = font.render("Rats: " + str(len(model.colonies[0].rats)), True, config.foreground)
-        label_food = font.render("Food: " + str(len(model.map.food)), True, config.foreground)
-
-        self.screen.blit(label_time, (10, 10))
-        self.screen.blit(label_rats, (10, 20))
-        self.screen.blit(label_food, (10, 30))
+        self._render_info(model)
 
         pygame.display.flip()
 
@@ -57,15 +53,9 @@ class View:
             label = font.render(rat.name, True, config.foreground)
             self.screen.blit(label, (rat.rect.topright[0] + 5, rat.rect.topright[1] - 10))
         if rat.movement_phase < (config.movement_cycle / 2):
-            if rat.color == 0:
-                baseimage = images['rat']
-            else:
-                baseimage = images['white_rat']
+            baseimage = images['rat'][rat.color]
         else:
-            if rat.color == 0:
-                baseimage = images['rat_moving']
-            else:
-                baseimage = images['white_rat_moving']
+            baseimage = images['rat_moving'][rat.color]
         if rat.look_left:
             image = baseimage
         else:
@@ -84,12 +74,34 @@ class View:
         if config.show_names:
             label = font.render(rat.name, True, config.foreground)
             self.screen.blit(label, (rat.rect.topright[0] + 5, rat.rect.topright[1] - 10))
-        if rat.color == 0:
-            baseimage = pygame.transform.flip(images['rat'], False, True)
-        else:
-            baseimage = pygame.transform.flip(images['white_rat'], False, True)
+        baseimage = pygame.transform.flip(images['rat'][rat.color], False, True)
         if rat.look_left:
             image = baseimage
         else:
             image = pygame.transform.flip(baseimage, True, False)
         self.screen.blit(image, rat.rect)
+
+
+    def _render_info(self, model):
+        label_time = font.render("Time", True, config.foreground)
+        label_time_value = font.render(str(model.time), True, config.foreground)
+        label_food = font.render("Food", True, config.foreground)
+        label_food_value = font.render(str(len(model.map.food)), True, config.foreground)
+
+        label_rats = font.render("Rats", True, config.foreground)
+        labels_rats_value = []
+        for colony in model.colonies:
+            label_rats_value = font.render(str(len(colony.get_rats())), True, config.color[colony.color])
+            labels_rats_value.append(label_rats_value)
+
+        x_value_offset = 45
+        self.screen.blit(label_time, (10, 10))
+        self.screen.blit(label_time_value, (x_value_offset, 10))
+        self.screen.blit(label_food, (10, 20))
+        self.screen.blit(label_food_value, (x_value_offset, 20))
+        self.screen.blit(label_rats, (10, 30))
+        y_offset = 30
+        for label in labels_rats_value:
+            self.screen.blit(label, (x_value_offset, y_offset))
+            y_offset = y_offset + 10
+        

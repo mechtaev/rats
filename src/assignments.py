@@ -1,12 +1,15 @@
 from model import *
 import random
 import config
+import utils
+import math
 
 
 _logger = logging.getLogger(__name__)
 
 
-class Compound(Assignment):
+# Succeed if all succeed. If one fails, stop execution.
+class Pipe(Assignment):
 
     def __init__(self, assignments):
         self.assignments = assignments
@@ -31,6 +34,26 @@ class Compound(Assignment):
             return Status.failure
         if len(self.assignments) == 0 and self.current.status(rat, colony, model) == Status.success:
             return Status.success
+        return Status.in_progress
+
+
+# Return status of the last assignment, don't require success to continue
+class Seq(Assignment):
+
+    def __init__(self, assignments):
+        self.assignments = assignments
+        self.current = assignments.pop(0)
+
+    def step(self, rat, colony, model):
+        if self.current.status(rat, colony, model) != Status.in_progress:
+            if len(self.assignments) > 0:
+                self.current = self.assignments.pop(0)
+        else:
+            self.current.step(rat, colony, model)
+
+    def status(self, rat, colony, model):
+        if len(self.assignments) == 0 and self.current.status(rat, colony, model) != Status.in_progress:
+            return self.current.status(rat, colony, model)
         return Status.in_progress
 
 
@@ -101,12 +124,59 @@ class Invisible(Assignment):
             return Status.in_progress
 
 
-class Move(Assignment):
+class Fight(Assignment):
 
-    def __init__(self, destination):
-        self.destination = destination
+    def __init__(self, enemy, hostile_colony):
+        self.enemy = enemy
+        self.hostile_colony = hostile_colony
+        self.finished = False
 
     def step(self, rat, colony, model):
+        kill = random.randint(0, config.kill_probability) == 0
+        if kill:
+            dead = self.hostile_colony.kill_rat(self.enemy, model.time)
+            if dead is not None:
+                model.map.dead_bodies.append(dead)
+            self.finished = True
+
+    def status(self, rat, colony, model):
+        if self.finished:
+            return Status.success
+        else:
+            return Status.in_progress
+
+
+class Move(Assignment):
+
+    def __init__(self, destination, conscious):
+        self.conscious = conscious
+        self.destination = destination
+
+    def find_enemy(self, rat, colony, model):
+        for other_colony in model.colonies:
+            if other_colony == colony:
+                continue
+            else:
+                for enemy in other_colony.get_rats():
+                    dsq = utils.distance_square(enemy.rect.topleft, rat.rect.topleft)
+                    if dsq <= config.sight_distance ** 2:
+                        dist = int(math.sqrt(dsq))
+                        return (enemy, other_colony, dist)
+        return None
+
+    def step(self, rat, colony, model):
+        if self.conscious:
+            target = self.find_enemy(rat, colony, model)
+            if target != None:
+                enemy, hostile_colony, dist = target
+                assignments = []
+                if dist <= config.attack_distance:
+                    assignments.append(Fight(enemy, hostile_colony))
+                else:
+                    assignments.append(Move(utils.middlepoint(enemy.rect.topleft, rat.rect.topleft), False))
+                assignments.append(rat.assignment)
+                rat.assignment = Seq(assignments)
+                return        
         possible_moves = []
         if rat.rect.topleft == self.destination:
             return

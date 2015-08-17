@@ -76,18 +76,51 @@ class Rat:
 
 class Colony:
 
-    def __init__(self, ai, rats, holes):
+    def __init__(self, color, ai, holes):
+        self.color = color
         self.ai = ai
-        self.rats = rats
-        self.holes = holes
+        self._rats = []
+        self._holes = holes
         self.belongs = dict()
-        rats_for_holes = utils.partition(rats, len(holes))
-        for index, partition in enumerate(rats_for_holes):
-            for rat in partition:
-                self.belongs[rat] = holes[index]
 
     def step(self, model):
+        # eating
+        for rat in self._rats:
+            if model.time - rat.last_eat >= config.eating_period:
+                hole = self.belongs[rat]
+                if hole.food == 0:
+                    dead = self.kill_rat(rat, model.time)
+                    if dead is not None:
+                        model.map.dead_bodies.append(dead)
+                else:
+                    hole.food = hole.food - 1
+                    rat.last_eat = model.time
+        # creating new rats
+        if model.time % config.birth_period == 0:
+            for hole in self._holes:
+                if hole.food >= config.birth_threshold:
+                    self.add_new_rat(hole.rect.topleft, hole, model.time)
+                    hole.food = hole.food - config.birth_price
+        # assignments
         self.ai.step(self, model)
+
+    def kill_rat(self, rat, current_time):
+        if rat in self._rats:
+            self._rats.remove(rat)
+            del self.belongs[rat]
+            return DeadBody(rat, current_time)
+        return None
+
+    def add_new_rat(self, location, hole, current_time):
+        newrat = Rat(self.color, location, current_time)
+        self._rats.append(newrat)
+        self.belongs[newrat] = hole
+
+    def get_rats(self):
+        return self._rats
+
+    def get_holes(self):
+        return self._holes
 
     
 class Model:
@@ -105,21 +138,4 @@ class Model:
             if self.time - dead_body.time >= config.dead_body_period:
                 self.map.dead_bodies.remove(dead_body)
         for colony in self.colonies:
-            if self.time % config.birth_period == 0:
-                for hole in colony.holes:
-                    if hole.food >= config.birth_threshold:
-                        newrat = Rat(random.choice([0, 1]), hole.rect.topleft, self.time)
-                        colony.rats.append(newrat)
-                        colony.belongs[newrat] = hole
-                        hole.food = hole.food - config.birth_price
-            for rat in colony.rats:
-                if self.time - rat.last_eat >= config.eating_period:
-                    hole = colony.belongs[rat]
-                    if hole.food == 0:
-                        colony.rats.remove(rat)
-                        del colony.belongs[rat]
-                        self.map.dead_bodies.append(DeadBody(rat, self.time))
-                    else:
-                        hole.food = hole.food - 1
-                        rat.last_eat = self.time
             colony.step(self)
