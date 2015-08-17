@@ -1,17 +1,32 @@
 #!/usr/bin/env python3
 
+import config
+import pygame
 import model
 import render
-import ai
+from generator import Generator
 import time
 import logging
 
 if __name__ == "__main__":
+
     logging.basicConfig(filename='rats.log', level=logging.INFO)
-    game = model.Model(100, 100, 10, [ai.AI()])
+
+    generator = Generator()
+    game = model.Model(generator)
     view = render.View(game.map.size)
-    while True:
+
+    running = True
+    while running:
         game.step()
         view.render(game)
-        time.sleep(0.05)
+        time.sleep(config.speed)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    running = False
 
