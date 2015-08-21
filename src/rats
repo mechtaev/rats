@@ -7,12 +7,19 @@ import render
 from generator import Generator
 import time
 import logging
+from player import Player
+from computer import Computer
+import menu
 
 if __name__ == "__main__":
 
     logging.basicConfig(filename='rats.log', level=logging.INFO)
 
-    generator = Generator()
+    if config.enable_menu:
+        menu.show_menu()
+
+    pygame.init()
+    generator = Generator(Player())
     game = model.Model(generator)
     view = render.View(game.map.size)
 
@@ -20,7 +27,7 @@ if __name__ == "__main__":
     while running:
         game.step()
         view.render(game)
-        time.sleep(config.speed)
+        time.sleep(config.speed_value[config.speed])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

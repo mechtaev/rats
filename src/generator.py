@@ -1,12 +1,18 @@
 import utils
 import random
+import logging
 from model import *
 import pygame
 from ai import AI
+from computer import Computer
+
+
+_logger = logging.getLogger(__name__)
+
 
 class Generator:
 
-    def __init__(self):
+    def __init__(self, player):
         if config.fullscreen:
             infoObject = pygame.display.Info()
             self.map_size = (infoObject.current_w, infoObject.current_h)
@@ -15,10 +21,10 @@ class Generator:
         self.holes = []
         for i in range(config.num_holes):
             self.holes.append(Hole(self.randpoint())) # should be less random
-        colonies = [(0, AI()), (1, AI())]
+        colonies = [(0, AI(), player), (1, AI(), Computer())]
         holes_for_colony = utils.partition(self.holes, len(colonies))
         self.colonies = []
-        for index, (color, ai) in enumerate(colonies):
+        for index, (color, ai, _) in enumerate(colonies):
             holes = holes_for_colony[index]
             colony = Colony(color, ai, holes)
             for i in range(config.num_rats):

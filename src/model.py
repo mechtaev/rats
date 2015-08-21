@@ -8,7 +8,6 @@ from pygame import Rect
 from faker import Factory
 
 
-_fake = Factory.create('ru_RU')
 _logger = logging.getLogger(__name__)
 
 
@@ -59,13 +58,13 @@ class Assignment:
 
 class Rat:
 
-    def __init__(self, color, location, birthtime):
+    def __init__(self, color, name, location, birthtime):
         self.color = color
         self.rect = Rect(location, config.rat_size)
         self.assignment = Assignment()
         self.look_left = True
         self.movement_phase = 0
-        self.name = _fake.first_name()
+        self.name = name
         self.carry_food = False
         self.last_eat = birthtime
         self.invisible = False
@@ -78,6 +77,7 @@ class Colony:
 
     def __init__(self, color, ai, holes):
         self.color = color
+        self._fake = Factory.create(config.locale[color])
         self.ai = ai
         self._rats = []
         self._holes = holes
@@ -112,7 +112,7 @@ class Colony:
         return None
 
     def add_new_rat(self, location, hole, current_time):
-        newrat = Rat(self.color, location, current_time)
+        newrat = Rat(self.color, self._fake.first_name(), location, current_time)
         self._rats.append(newrat)
         self.belongs[newrat] = hole
 
@@ -137,5 +137,7 @@ class Model:
         for dead_body in self.map.dead_bodies:
             if self.time - dead_body.time >= config.dead_body_period:
                 self.map.dead_bodies.remove(dead_body)
-        for colony in self.colonies:
+        colonies_copy = self.colonies[:]
+        random.shuffle(colonies_copy)
+        for colony in colonies_copy:
             colony.step(self)

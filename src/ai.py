@@ -13,7 +13,6 @@ class AI:
     def step(self, colony, model):
         for rat in colony.get_rats():
             if rat.assignment.status(rat, colony, model) != Status.in_progress:
-                _logger.info("[{}] {} finished its assignment".format(str(model.time), rat.name))
                 if len(model.map.food) > 0:
                     rat.assignment = self.find_food(rat, colony, model)
             rat.step(colony, model)
