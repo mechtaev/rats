@@ -8,7 +8,7 @@ import utils
 _logger = logging.getLogger(__name__)
 
 
-class AI:
+class Manager:
 
     def step(self, colony, model):
         for rat in colony.get_rats():

@@ -3,7 +3,7 @@ import random
 import logging
 from model import *
 import pygame
-from ai import AI
+from manager import Manager
 from computer import Computer
 
 
@@ -21,12 +21,12 @@ class Generator:
         self.holes = []
         for i in range(config.num_holes):
             self.holes.append(Hole(self.randpoint()))  # should be less random
-        colonies = [(0, AI(), player), (1, AI(), Computer())]
+        colonies = [(0, Manager(), player), (1, Manager(), Computer())]
         holes_for_colony = utils.partition(self.holes, len(colonies))
         self.colonies = []
-        for index, (color, ai, _) in enumerate(colonies):
+        for index, (color, manager, player) in enumerate(colonies):
             holes = holes_for_colony[index]
-            colony = Colony(color, ai, holes)
+            colony = Colony(color, holes, manager, player)
             for i in range(config.num_rats):
                 colony.add_new_rat(self.randpoint(), random.choice(holes), 0)
             self.colonies.append(colony)

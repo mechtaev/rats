@@ -35,6 +35,8 @@ class View:
 
         for hole in model.map.holes:
             self._render_hole(hole)
+        for target in model.colonies[0].targets:
+            self._render_target(*target.rect.topleft)
         for food in model.map.food:
             self.screen.blit(self.images['food'], food)
         for dead in model.map.dead_bodies:
@@ -47,6 +49,13 @@ class View:
         self._render_info(model)
 
         pygame.display.flip()
+
+    def _render_target(self, x, y):
+        rect = (x - config.target_size + (config.hole_size[0] // 2),
+                y - config.target_size + (config.hole_size[1] // 2),
+                config.target_size * 2,
+                config.target_size * 2)
+        pygame.draw.rect(self.screen, config.target_color, rect, 1)
 
     def _render_hole(self, hole):
         self.screen.blit(self.images['hole'], hole.rect)

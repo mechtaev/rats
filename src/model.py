@@ -73,13 +73,15 @@ class Rat:
 
 class Colony:
 
-    def __init__(self, color, ai, holes):
+    def __init__(self, color, holes, manager, player):
         self.color = color
         self._fake = Factory.create(config.locale[color])
-        self.ai = ai
+        self.manager = manager
+        self.player = player
         self._rats = []
         self._holes = holes
         self.belongs = dict()
+        self.targets = []
 
     def step(self, model):
         # eating
@@ -100,7 +102,9 @@ class Colony:
                     self.add_new_rat(hole.rect.topleft, hole, model.time)
                     hole.food = hole.food - config.birth_price
         # assignments
-        self.ai.step(self, model)
+        self.manager.step(self, model)
+        # decisions
+        self.player.step(self, model)
 
     def kill_rat(self, rat, current_time):
         if rat in self._rats:

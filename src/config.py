@@ -10,7 +10,7 @@ enable_menu = False
 fullscreen = False
 size = (1280, 720)
 background = (150, 180, 130)
-foreground = (190, 235, 210)
+foreground = (180, 235, 210)
 color = dict()
 color[0] = (100, 100, 100)
 color[1] = (250, 250, 250)
@@ -20,6 +20,8 @@ locale[1] = 'en_US'
 font_name = 'Ubuntu'
 font_size = 11
 show_names = False
+target_color = (180, 130, 130)
+target_size = 20
 
 # model
 hole_size = (15, 15)
@@ -44,3 +46,6 @@ kill_probability = 10
 # map
 new_food_period = 10
 dead_body_period = 500
+
+# controls
+click_radius = 20

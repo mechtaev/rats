@@ -19,7 +19,8 @@ if __name__ == "__main__":
         menu.show_menu()
 
     pygame.init()
-    generator = Generator(Player())
+    player = Player()
+    generator = Generator(player)
     game = model.Model(generator)
     view = render.View(game.map.size)
 
@@ -36,4 +37,6 @@ if __name__ == "__main__":
                 if event.key == pygame.K_q:
                     pygame.quit()
                     running = False
-
+            if event.type == pygame.MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                player.process_click(pos)
