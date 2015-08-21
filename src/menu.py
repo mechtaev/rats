@@ -8,6 +8,8 @@ class Menu:
     def __init__(self, root):
         self.root = root
 
+        self.root.protocol('WM_DELETE_WINDOW', self.exit)
+
         button_width = 6
 		
         button_padx = "2m"
@@ -63,6 +65,9 @@ class Menu:
         exit_button.bind("<Button-1>", self.exit_button_click)
 
     def exit_button_click(self, event):
+        self.exit()
+
+    def exit(self):
         exit(0)
 
     def play_button_click(self, event):
