@@ -1,32 +1,26 @@
 from tkinter import *
 import config
 
-class Menu:
 
-    
+class Menu:
 
     def __init__(self, root):
         self.root = root
 
         self.root.protocol('WM_DELETE_WINDOW', self.exit)
 
-        button_width = 6
-		
-        button_padx = "2m"
-        button_pady = "1m"
-        
-        buttons_frame_padx =  "3m"
-        buttons_frame_pady =  "2m"
+        buttons_frame_padx = "3m"
+        buttons_frame_pady = "2m"
         buttons_frame_ipadx = "3m"
         buttons_frame_ipady = "1m"
-        
+
         settings = Frame(root)
         settings.pack(side=TOP,
                       ipadx=buttons_frame_ipadx,
                       ipady=buttons_frame_ipady,
                       padx=buttons_frame_padx,
                       pady=buttons_frame_pady)
-        
+
         controls = Frame(root)
         controls.pack(side=BOTTOM,
                       ipadx=buttons_frame_ipadx,
@@ -55,12 +49,12 @@ class Menu:
         speed_menu.grid(row=1, column=1, sticky=W)
 
         play_button = Button(controls)
-        play_button["text"]= "Play!"
+        play_button["text"] = "Play!"
         play_button.pack(side=LEFT)
         play_button.bind("<Button-1>", self.play_button_click)
 
         exit_button = Button(controls)
-        exit_button["text"]= "Exit"
+        exit_button["text"] = "Exit"
         exit_button.pack(side=RIGHT)
         exit_button.bind("<Button-1>", self.exit_button_click)
 
@@ -90,11 +84,9 @@ def _center(toplevel):
 
 def show_menu():
     root = Tk()
-    #root.overrideredirect(1)
-    root.resizable(0,0)
+    # root.overrideredirect(1)
+    root.resizable(0, 0)
     _center(root)
     root.wm_title("Rats " + str(config.version) + " Settings")
     Menu(root)
     root.mainloop()
-
-

@@ -1,6 +1,4 @@
 import random
-import utils
-import collections
 import logging
 import config
 from enum import Enum
@@ -27,7 +25,7 @@ class DeadBody:
         self.look_left = rat.look_left
         self.time = time
 
-        
+
 class Map:
 
     def __init__(self, generator):
@@ -54,7 +52,7 @@ class Assignment:
 
     def step(self, rat, colony, model):
         pass
-    
+
 
 class Rat:
 
@@ -122,7 +120,7 @@ class Colony:
     def get_holes(self):
         return self._holes
 
-    
+
 class Model:
 
     def __init__(self, generator):

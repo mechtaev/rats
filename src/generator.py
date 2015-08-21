@@ -20,7 +20,7 @@ class Generator:
             self.map_size = config.size
         self.holes = []
         for i in range(config.num_holes):
-            self.holes.append(Hole(self.randpoint())) # should be less random
+            self.holes.append(Hole(self.randpoint()))  # should be less random
         colonies = [(0, AI(), player), (1, AI(), Computer())]
         holes_for_colony = utils.partition(self.holes, len(colonies))
         self.colonies = []
@@ -44,7 +44,3 @@ class Generator:
 
     def new_food(self):
         return pygame.Rect(self.randpoint(), config.food_size)
-
-    
-
-        

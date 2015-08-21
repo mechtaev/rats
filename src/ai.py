@@ -19,8 +19,10 @@ class AI:
 
     def find_food(self, rat, colony, model):
         assignments = []
+
         def distance_from_rat(rect):
             return utils.distance_square(rat.rect.topleft, rect.topleft)
+
         destination = random.choice(sorted(model.map.food, key=distance_from_rat)[:3]).topleft
         assignments.append(Move(destination, True))
         assignments.append(TakeFood())

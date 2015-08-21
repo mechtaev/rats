@@ -1,6 +1,5 @@
 import pygame
 import os
-import model
 import config
 import logging
 
@@ -33,7 +32,7 @@ class View:
 
     def render(self, model):
         self.screen.fill(config.background)
-        
+
         for hole in model.map.holes:
             self._render_hole(hole)
         for food in model.map.food:
@@ -119,6 +118,3 @@ class View:
             self.screen.blit(label, (x_value_offset, y_offset))
             y_offset = y_offset + y_increment
         self.screen.blit(label_help, (self.size[0] - x_offset_right, y_offset_right))
-
-        
-        

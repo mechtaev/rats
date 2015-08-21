@@ -67,12 +67,12 @@ class TakeFood(Assignment):
     def step(self, rat, colony, model):
         self.tried = True
         result = next((i for (i, r) in enumerate(model.map.food) if r.topleft == rat.rect.topleft), None)
-        if result == None:
+        if result is None:
             self.taken = False
         else:
             self.taken = True
             rat.carry_food = True
-            del model.map.food[result]        
+            del model.map.food[result]
 
     def status(self, rat, colony, model):
         if not self.tried:
@@ -168,17 +168,17 @@ class Move(Assignment):
     def step(self, rat, colony, model):
         if self.conscious:
             target = self.find_enemy(rat, colony, model)
-            if target != None:
+            if target is not None:
                 enemy, hostile_colony, dist = target
                 assignments = []
                 if dist <= config.attack_distance:
                     assignments.append(Fight(enemy, hostile_colony))
                 else:
-                    assignments.append(Move(utils.middlepoint(enemy.rect.topleft, rat.rect.topleft), False))
+                    move = Move(utils.middlepoint(enemy.rect.topleft, rat.rect.topleft), False)
+                    assignments.append(move)
                 assignments.append(rat.assignment)
                 rat.assignment = Seq(assignments)
-                return        
-        possible_moves = []
+                return
         if rat.rect.topleft == self.destination:
             return
         dx = self.destination[0] - rat.rect.x

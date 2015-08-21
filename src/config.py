@@ -4,7 +4,7 @@ speed_value['Fast'] = 0.02
 speed_value['Normal'] = 0.04
 speed_value['Slow'] = 0.06
 version = 0.1
-enable_menu = True
+enable_menu = False
 
 # visual
 fullscreen = False
