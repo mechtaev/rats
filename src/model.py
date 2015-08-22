@@ -134,7 +134,7 @@ class Model:
 
     def step(self):
         self.time = self.time + 1
-        if self.time % config.new_food_period == 0:
+        if self.time % config.new_food_period_value[config.new_food_period] == 0:
             self.map.add_food()
         for dead_body in self.map.dead_bodies:
             if self.time - dead_body.time >= config.dead_body_period:

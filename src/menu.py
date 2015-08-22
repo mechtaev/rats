@@ -28,8 +28,8 @@ class Menu:
                       padx=buttons_frame_padx,
                       pady=buttons_frame_pady)
 
-        fullscreen_label = Label(settings, text="Fullscreen:")
-        fullscreen_label.grid(row=0, sticky=W)
+        fullscreen_label = Label(settings, text="Fullscreen ")
+        fullscreen_label.grid(row=0, sticky=E)
 
         fullscreen = Checkbutton(settings)
         if config.fullscreen:
@@ -39,14 +39,23 @@ class Menu:
         fullscreen.grid(row=0, column=1, sticky=W)
         fullscreen.bind("<Button-1>", self.fullscreen_toggle)
 
-        speed_label = Label(settings, text="Speed:")
-        speed_label.grid(row=1, sticky=W)
+        speed_label = Label(settings, text="Speed ")
+        speed_label.grid(row=1, sticky=E)
 
         optionList = config.speed_value.keys()
         self.chosen_speed = StringVar()
         self.chosen_speed.set(config.speed)
         speed_menu = OptionMenu(settings, self.chosen_speed, *optionList)
         speed_menu.grid(row=1, column=1, sticky=W)
+
+        cheese_label = Label(settings, text="Cheese ")
+        cheese_label.grid(row=2, sticky=E)
+
+        optionList = config.new_food_period_value.keys()
+        self.chosen_cheese = StringVar()
+        self.chosen_cheese.set(config.new_food_period)
+        cheese_menu = OptionMenu(settings, self.chosen_cheese, *optionList)
+        cheese_menu.grid(row=2, column=1, sticky=W)
 
         play_button = Button(controls)
         play_button["text"] = "Play!"
@@ -66,6 +75,7 @@ class Menu:
 
     def play_button_click(self, event):
         config.speed = self.chosen_speed.get()
+        config.new_food_period = self.chosen_cheese.get()
         self.root.destroy()
 
     def fullscreen_toggle(self, event):

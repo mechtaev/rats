@@ -1,10 +1,10 @@
 speed = 'Normal'
 speed_value = dict()
-speed_value['Fast'] = 0.02
-speed_value['Normal'] = 0.04
-speed_value['Slow'] = 0.06
+speed_value['Fast'] = 0.01
+speed_value['Normal'] = 0.03
+speed_value['Slow'] = 0.05
 version = 0.1
-enable_menu = False
+enable_menu = True
 
 # visual
 fullscreen = False
@@ -44,7 +44,11 @@ attack_distance = 3
 kill_probability = 10
 
 # map
-new_food_period = 10
+new_food_period = 'Normal'
+new_food_period_value = dict()
+new_food_period_value['Normal'] = 10
+new_food_period_value['High'] = 5
+new_food_period_value['Low'] = 15
 dead_body_period = 500
 
 # controls
