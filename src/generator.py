@@ -31,10 +31,13 @@ class Generator:
                 colony.add_new_rat(self.randpoint(), random.choice(holes), 0)
             self.colonies.append(colony)
 
-    def randpoint(self):
-        x = random.randint(0, self.map_size[0])
-        y = random.randint(0, self.map_size[1])
+    def randpoint_rect(self, topleft, bottomright):
+        x = random.randint(topleft[0], bottomright[0])
+        y = random.randint(topleft[1], bottomright[1])
         return (x, y)
+
+    def randpoint(self):
+        return self.randpoint_rect((0, 0), self.map_size)
 
     def initial_food(self):
         food = []
