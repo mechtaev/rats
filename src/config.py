@@ -1,8 +1,10 @@
 speed = 'Normal'
 speed_value = dict()
-speed_value['Fast'] = 0.01
-speed_value['Normal'] = 0.03
-speed_value['Slow'] = 0.05
+speed_value['Fast'] = 1.2
+speed_value['Normal'] = 1.0
+speed_value['Slow'] = 0.8
+initial_speed = 0.03
+normal_fps = 25
 version = 0.1
 enable_menu = True
 
@@ -17,8 +19,7 @@ color[1] = (250, 250, 250)
 locale = dict()
 locale[0] = 'ru_RU'
 locale[1] = 'en_US'
-font_name = 'Ubuntu'
-font_size = 11
+font_size = 12
 show_names = False
 target_color = (180, 130, 130)
 target_size = 20
@@ -31,6 +32,7 @@ num_rats = 20
 num_food = 100
 num_holes = 8
 cheese_weigth = 3
+use_index = True
 
 # rats
 movement_cycle = 6

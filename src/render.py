@@ -2,6 +2,7 @@ import pygame
 import os
 import config
 import logging
+import globals
 
 
 _logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ class View:
         self.images['food'] = pygame.image.load(os.path.join('data', 'food.png'))
         self.images['hole'] = pygame.image.load(os.path.join('data', 'hole.png'))
 
-        self.font = pygame.font.SysFont(config.font_name, config.font_size)
+        self.font = pygame.font.Font(os.path.join('data', 'VeraBd.ttf'), config.font_size)
 
         if config.fullscreen:
             self.screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
@@ -100,6 +101,9 @@ class View:
         label_time_value = self.font.render(str(model.time), True, config.foreground)
         label_food = self.font.render("Food", True, config.foreground)
         label_food_value = self.font.render(str(len(model.map.food)), True, config.foreground)
+        label_fps = self.font.render("FPS", True, config.foreground)
+        fps_str = str(globals.fps) + "/" + str(globals.max_fps)
+        label_fps_value = self.font.render(fps_str, True, config.foreground)
         label_help = self.font.render("Press Q to quit", True, config.foreground)
 
         label_rats = self.font.render("Rats", True, config.foreground)
@@ -112,18 +116,26 @@ class View:
 
         x_offset = 15
         y_offset = 15
-        x_offset_right = 90
+        x_offset_right = 130
         y_offset_right = 15
-        x_value_offset = 50
+        x_value_offset = 60
         y_increment = 15
+
         self.screen.blit(label_time, (x_offset, y_offset))
         self.screen.blit(label_time_value, (x_value_offset, y_offset))
         y_offset = y_offset + y_increment
+
         self.screen.blit(label_food, (x_offset, y_offset))
         self.screen.blit(label_food_value, (x_value_offset, y_offset))
         y_offset = y_offset + y_increment
+
         self.screen.blit(label_rats, (x_offset, y_offset))
         for label in labels_rats_value:
             self.screen.blit(label, (x_value_offset, y_offset))
             y_offset = y_offset + y_increment
+
+        self.screen.blit(label_fps, (x_offset, y_offset))
+        self.screen.blit(label_fps_value, (x_value_offset, y_offset))
+        y_offset = y_offset + y_increment
+
         self.screen.blit(label_help, (self.size[0] - x_offset_right, y_offset_right))

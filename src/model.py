@@ -4,6 +4,7 @@ import config
 from enum import Enum
 from pygame import Rect
 from faker import Factory
+import quadtree
 
 
 _logger = logging.getLogger(__name__)
@@ -38,6 +39,30 @@ class Map:
     def add_food(self):
         self.food.append(self._generator.new_food())
 
+    # Without index it gives me 25 max-fps with 100 rats in a colony in fullscreen mode
+    # With index, it is about 50
+    # this is a stupid solution (I need to update it each step of each colony)
+    def update_enemy_index(self, colony, model):
+        rats = []
+        for other_colony in model.colonies:
+            if other_colony == colony:
+                continue
+            else:
+                rats += other_colony.get_rats()
+        if len(rats) > 0:
+            self.index = quadtree.QuadTree(rats, 5) # magic number
+        else:
+            self.index = None
+
+    def get_neighbours(self, rat, distance):
+        if self.index is None:
+            return []
+        box = Rect(rat.left - distance,
+                   rat.top - distance,
+                   2 * distance,
+                   2 * distance)
+        return self.index.hit(box)
+
 
 class Status(Enum):
     success = 1
@@ -55,6 +80,19 @@ class Assignment:
 
 
 class Rat:
+
+    @property
+    def rect(self):
+        return self._rect
+
+    # it is already not nice. I should somehow ingrate them with rect better
+    @rect.setter
+    def rect(self, value):
+        self.left = value.left
+        self.right = value.left
+        self.top = value.top
+        self.bottom = value.top
+        self._rect = value
 
     def __init__(self, color, name, location, birthtime):
         self.color = color
@@ -101,6 +139,9 @@ class Colony:
                 if hole.food >= config.birth_threshold:
                     self.add_new_rat(hole.rect.topleft, hole, model.time)
                     hole.food = hole.food - config.birth_price
+        # updating index
+        if config.use_index:
+            model.map.update_enemy_index(self, model)
         # assignments
         self.manager.step(self, model)
         # decisions

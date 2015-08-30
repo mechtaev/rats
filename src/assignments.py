@@ -154,15 +154,23 @@ class Move(Assignment):
         self.destination = destination
 
     def find_enemy(self, rat, colony, model):
-        for other_colony in model.colonies:
-            if other_colony == colony:
-                continue
-            else:
-                for enemy in other_colony.get_rats():
-                    dsq = utils.distance_square(enemy.rect.topleft, rat.rect.topleft)
-                    if dsq <= config.sight_distance ** 2:
-                        dist = int(math.sqrt(dsq))
-                        return (enemy, other_colony, dist)
+        if config.use_index:
+            enemies = model.map.get_neighbours(rat, config.sight_distance)
+            for enemy in enemies:
+                dist = utils.distance(enemy.rect.topleft, rat.rect.topleft)
+                if dist <= config.sight_distance:
+                    for other_colony in model.colonies:
+                        if enemy in other_colony.get_rats():
+                            return (enemy, other_colony, dist)
+        else:
+            for other_colony in model.colonies:
+                if other_colony == colony:
+                    continue
+                else:
+                    for enemy in other_colony.get_rats():
+                        dist = utils.distance(enemy.rect.topleft, rat.rect.topleft)
+                        if dist <= config.sight_distance:
+                            return (enemy, other_colony, dist)
         return None
 
     def step(self, rat, colony, model):
@@ -208,7 +216,7 @@ class Move(Assignment):
         if (not rat.look_left) and move[0] < 0:
             rat.look_left = True
         rat.movement_phase = (rat.movement_phase + 1) % config.movement_cycle
-        rat.rect.move_ip(move)
+        rat.rect = rat.rect.move(move)
 
     def status(self, rat, colony, model):
         if rat.rect.topleft == self.destination:
